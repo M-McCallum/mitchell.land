@@ -1,18 +1,14 @@
-<script> 
+<script>
+// @ts-nocheck
+ 
+    
 
-    const el = document.querySelector(".item");
-    
     let isResizing = false;
-    
-    el.addEventListener("mousedown", mousedown);
-    
     function mousedown(e) {
-      window.addEventListener("mousemove", mousemove);
+      window.addEventListener("mousemove", (e) => mousemove(e));
       window.addEventListener("mouseup", mouseup);
-    
       let prevX = e.clientX;
       let prevY = e.clientY;
-    
       function mousemove(e) {
         if (!isResizing) {
           let newX = prevX - e.clientX;
@@ -34,13 +30,11 @@
       }
     }
     
-    const resizers = document.querySelectorAll(".resizer");
     let currentResizer;
+
+
     
-    for (let resizer of resizers) {
-      resizer.addEventListener("mousedown", mousedown);
-    
-      function mousedown(e) {
+      function resizedown(e) {
         currentResizer = e.target;
         isResizing = true;
     
@@ -51,15 +45,11 @@
         window.addEventListener("mouseup", mouseup);
     
         function mousemove(e) {
-          const rect = el.getBoundingClientRect();
-    
-          if (currentResizer.classList.contains("se")) {
+            const rect = el.getBoundingClientRect();
             el.style.width = rect.width - (prevX - e.clientX) + "px";
             el.style.height = rect.height - (prevY - e.clientY) + "px";
-          } 
-    
-          prevX = e.clientX;
-          prevY = e.clientY;
+            prevX = e.clientX;
+            prevY = e.clientY;
         }
     
         function mouseup() {
@@ -67,13 +57,31 @@
           window.removeEventListener("mouseup", mouseup);
           isResizing = false;
         }
-      }
     }
     
     </script>
 
 
-<div class="item">
-
-    
+<div class="resize-continer" on:mousedown={(e) => mousedown(e)}>
+    <div class="resize-content-well">
+        <slot></slot>
+    </div>
+    <span class="resizer" on:mousedown={(e) => resizedown(e)}>&xharr;</span>
 </div>
+
+
+<style>
+
+
+
+.resizer {
+    transform: rotate(45deg);
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    color: red;
+    border: solid 2px salmon;
+}
+
+
+</style>
